@@ -10,3 +10,6 @@ Le projet "DataScience x Logistic Regression" de 42 consiste à explorer des out
 - Régression Logistique : Implémenter un modèle de régression logistique pour la classification multi-classe (un contre tous), avec des programmes pour entraîner les modèles et prédire les résultats.
 
 Les objectifs incluent le développement d'une intuition sur les données et la création d'outils de visualisation et d'analyse de données.
+
+### Subject
+[en.subject.pdf](https://github.com/user-attachments/files/15837284/en.subject.pdf)
