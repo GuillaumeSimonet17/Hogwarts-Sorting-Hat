@@ -1,12 +1,37 @@
+import numpy as np
+import pandas as pd
+
 def is_nan(value):
     return value != value
 
-def sum(df):
-    sum = 0
-    for i in df:
+def sum_custom(data):
+    total = 0
+    for i in data:
         if not is_nan(i):
-            sum += i
-    return sum
+            total += i
+    return total
+
+def count(data):
+    return len([x for x in data if not is_nan(x)])
+
+def mean(data):
+    n = count(data)
+    if n == 0:
+        return None
+    return sum_custom(data) / n
+
+def var(data):
+    n = count(data)
+    if n < 2:
+        return None
+    mean_val = mean(data)
+    return sum((x - mean_val)**2 for x in data if not is_nan(x)) / (n - 1)
+
+def std(data):
+    variance = var(data)
+    if variance is None:
+        return None
+    return square_root(variance)
 
 def square_root(n, precision=0.0001):
     if n < 0:
@@ -20,61 +45,61 @@ def square_root(n, precision=0.0001):
             return root
         x = root
 
-def count(df):
-    count = 0
-    for i in df:
-        if not is_nan(i):
-            count += 1
-    return count
+def min_custom(data):
+    df_non_nan = [x for x in data if not is_nan(x)]
+    if not df_non_nan:
+        return None
+    min_val = df_non_nan[0]
+    for i in df_non_nan[1:]:
+        if min_val > i:
+            min_val = i
+    return min_val
 
-def mean(df):
-    return sum(df / count(df))
+def max_custom(data):
+    df_non_nan = [x for x in data if not is_nan(x)]
+    if not df_non_nan:
+        return None
+    max_val = df_non_nan[0]
+    for i in df_non_nan[1:]:
+        if max_val < i:
+            max_val = i
+    return max_val
 
-def var(df):
-    return 1/count(df) * sum((df - mean(df))**2)
-
-def std(df):
-    return square_root(var(df), precision=0.0001)
-
-def min(df):
-    min = df[0]
-    for i in df[1:]:
-        if min > i:
-            min = i
-    return min
-
-def max(df):
-    max = df[0]
-    for i in df[1:]:
-        if max < i:
-            max = i
-    return max
-
-def first_quartile(df):
-    df_non_nan = [x for x in df if not is_nan(x)]
+def first_quartile(data):
+    df_non_nan = [x for x in data if not is_nan(x)]
     df_sorted = sorted(df_non_nan)
-    index = 0.25 * len(df_sorted)
-    if index == int(index):
-        return df_sorted[int(index)]
-    else:
-        return (df_sorted[int(index)] + df_sorted[int(index) + 1]) / 2
+    index = 0.25 * (len(df_sorted) - 1)
+    return df_sorted[int(index)] if index.is_integer() else (df_sorted[int(index)] + df_sorted[int(index) + 1]) / 2
 
-def median(df):
-    df_non_nan = [x for x in df if not is_nan(x)]
+def median(data):
+    df_non_nan = [x for x in data if not is_nan(x)]
     df_sorted = sorted(df_non_nan)
-    index = 0.5 * len(df_sorted)
-    if index == int(index):
-        return df_sorted[int(index)]
-    else:
-        return (df_sorted[int(index)] + df_sorted[int(index) + 1]) / 2
+    index = 0.5 * (len(df_sorted) - 1)
+    return df_sorted[int(index)] if index.is_integer() else (df_sorted[int(index)] + df_sorted[int(index) + 1]) / 2
 
-
-def third_quartile(df):
-    df_non_nan = [x for x in df if not is_nan(x)]
+def third_quartile(data):
+    df_non_nan = [x for x in data if not is_nan(x)]
     df_sorted = sorted(df_non_nan)
-    index = 0.75 * len(df_sorted)
-    if index == int(index):
-        return df_sorted[int(index)]
-    else:
-        return (df_sorted[int(index)] + df_sorted[int(index) + 1]) / 2
+    index = 0.75 * (len(df_sorted) - 1)
+    return df_sorted[int(index)] if index.is_integer() else (df_sorted[int(index)] + df_sorted[int(index) + 1]) / 2
 
+def skewness(df):
+    df_non_nan = [x for x in df if not is_nan(x)]
+    n = len(df_non_nan)
+    mean_val = mean(df_non_nan)
+    std_val = std(df_non_nan)
+    if std_val == 0:
+        return 0
+    skew_sum = sum(((x - mean_val) / std_val)**3 for x in df_non_nan)
+    return (n / ((n-1) * (n-2))) * skew_sum
+
+def kurtosis(df):
+    df_non_nan = [x for x in df if not is_nan(x)]
+    n = len(df_non_nan)
+    mean_val = mean(df_non_nan)
+    std_val = std(df_non_nan)
+    if std_val == 0:
+        return 0
+    kur_sum = sum(((x - mean_val) / std_val)**4 for x in df_non_nan)
+    kurt = (n * (n + 1) / ((n - 1) * (n - 2) * (n - 3))) * kur_sum - (3 * (n - 1)**2 / ((n - 2) * (n - 3)))
+    return kurt
