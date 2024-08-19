@@ -89,7 +89,9 @@ requests==2.32.3
 rfc3339-validator==0.1.4
 rfc3986-validator==0.1.1
 rpds-py==0.18.1
+seaborn==0.13.2
 Send2Trash==1.8.3
+setuptools==72.2.0
 simplejson==3.19.2
 six==1.16.0
 sniffio==1.3.1
